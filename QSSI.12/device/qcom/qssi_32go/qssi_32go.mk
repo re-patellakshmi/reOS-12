@@ -1,0 +1,318 @@
+#For QSSI, we build only the system image. Here we explicitly set the images
+#we build so there is no confusion.
+
+TARGET_BOARD_PLATFORM := qssi
+TARGET_BOARD_SUFFIX := _32go
+TARGET_BOOTLOADER_BOARD_NAME := qssi_32go
+
+# Skip VINTF checks for kernel configs since we do not have kernel source
+PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
+
+# Enable product partition Native I/F. It is automatically set to current if
+# the shipping API level for the target is greater than 29.
+PRODUCT_PRODUCT_VNDK_VERSION := current
+
+# Mismatch in the uses-library tags between build system and the manifest leads
+# to soong APK manifest_check tool errors. Enable the flag to fix this.
+RELAX_USES_LIBRARY_CHECK := true
+
+# Enable product partition Java I/F. It is automatically set to true if
+# the shipping API level for the target is greater than 29.
+PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
+
+PRODUCT_BUILD_SYSTEM_IMAGE := true
+PRODUCT_BUILD_SYSTEM_OTHER_IMAGE := false
+PRODUCT_BUILD_VENDOR_IMAGE := false
+PRODUCT_BUILD_SYSTEM_EXT_IMAGE := false
+PRODUCT_BUILD_ODM_IMAGE := false
+PRODUCT_BUILD_CACHE_IMAGE := false
+PRODUCT_BUILD_USERDATA_IMAGE := false
+
+#Also, there is no need to build an OTA package as this will be done later
+#when we combine this system build with the non-system images.
+TARGET_SKIP_OTA_PACKAGE := true
+
+# Enable AVB 2.0
+BOARD_AVB_ENABLE := true
+
+# Set SYSTEMEXT_SEPARATE_PARTITION_ENABLE if was not already set (set earlier via build.sh).
+SYSTEMEXT_SEPARATE_PARTITION_ENABLE ?= false
+
+##############################Go configs###########################################
+#Go variant flag
+TARGET_HAS_LOW_RAM := true
+
+TARGET_SYSTEM_PROP := device/qcom/qssi_32go/system.prop
+
+# Enable DM file preopting to reduce first boot time
+PRODUCT_DEX_PREOPT_GENERATE_DM_FILES := true
+PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER := verify
+
+DONT_UNCOMPRESS_PRIV_APPS_DEXS := true
+
+$(call inherit-product, build/target/product/go_defaults.mk)
+$(call inherit-product-if-exists, frameworks/base/data/sounds/AudioPackageGo.mk)
+
+DEVICE_PACKAGE_OVERLAYS += device/qcom/qssi_32go/overlay-go/device
+PRODUCT_PACKAGE_OVERLAYS += device/qcom/qssi_32go/overlay-go/product
+
+#########################End of Go configs########################################
+
+
+#### Dynamic Partition Handling
+
+####
+
+# Retain the earlier default behavior i.e. ota config (dynamic partition was disabled if not set explicitly), so set
+# SHIPPING_API_LEVEL to 28 if it was not set earlier (this is generally set earlier via build.sh per-target)
+SHIPPING_API_LEVEL := 31
+
+#### Turning BOARD_DYNAMIC_PARTITION_ENABLE flag to TRUE will enable dynamic partition/super image creation.
+# Enable Dynamic partitions only for Q new launch devices and beyond
+ifeq (true,$(call math_gt_or_eq,$(SHIPPING_API_LEVEL),29))
+  BOARD_DYNAMIC_PARTITION_ENABLE ?= true
+  PRODUCT_SHIPPING_API_LEVEL := $(SHIPPING_API_LEVEL)
+else ifeq ($(SHIPPING_API_LEVEL),28)
+  BOARD_DYNAMIC_PARTITION_ENABLE ?= false
+  $(call inherit-product, build/make/target/product/product_launched_with_p.mk)
+endif
+
+ifneq ($(strip $(BOARD_DYNAMIC_PARTITION_ENABLE)),true)
+# Enable chain partition for system, to facilitate system-only OTA in Treble.
+BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX := 0
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
+PRODUCT_BUILD_RAMDISK_IMAGE := false
+PRODUCT_BUILD_PRODUCT_IMAGE := false
+else
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+# Disable building the SUPER partition in this build. SUPER should be built
+# after QSSI has been merged with the SoC build.
+ifeq ($(SYSTEMEXT_SEPARATE_PARTITION_ENABLE), true)
+PRODUCT_BUILD_SYSTEM_EXT_IMAGE := true
+endif
+PRODUCT_BUILD_PRODUCT_IMAGE := true
+PRODUCT_BUILD_SUPER_PARTITION := false
+PRODUCT_BUILD_RAMDISK_IMAGE := true
+ifeq ($(SYSTEMEXT_SEPARATE_PARTITION_ENABLE), true)
+BOARD_AVB_VBMETA_SYSTEM := system system_ext product
+else
+BOARD_AVB_VBMETA_SYSTEM := system product
+endif
+BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
+endif
+#### Dynamic Partition Handling
+
+PRODUCT_SOONG_NAMESPACES += \
+    frameworks/base/boot \
+    cts/tests/signature/api-check \
+    hardware/google/av \
+    hardware/google/interfaces
+
+VENDOR_QTI_PLATFORM := qssi_32go
+VENDOR_QTI_DEVICE := qssi_32go
+
+#QSSI configuration
+#Single system image project structure
+TARGET_USES_QSSI := true
+
+TARGET_USES_NEW_ION := true
+
+ENABLE_AB ?= true
+
+TARGET_DEFINES_DALVIK_HEAP := true
+$(call inherit-product, device/qcom/qssi_32go/common.mk)
+
+#Inherit all except heap growth limit from phone-xhdpi-2048-dalvik-heap.mk
+PRODUCT_PROPERTY_OVERRIDES  += \
+	dalvik.vm.heapstartsize=8m \
+	dalvik.vm.heapsize=512m \
+	dalvik.vm.heaptargetutilization=0.75 \
+	dalvik.vm.heapminfree=512k \
+	dalvik.vm.heapmaxfree=8m
+
+
+PRODUCT_NAME := $(VENDOR_QTI_DEVICE)
+PRODUCT_DEVICE := $(VENDOR_QTI_DEVICE)
+PRODUCT_BRAND := qti
+PRODUCT_MODEL := qssi system image for arm64
+
+PRODUCT_EXTRA_VNDK_VERSIONS := 30
+
+#Initial bringup flags
+TARGET_USES_AOSP := false
+TARGET_USES_AOSP_FOR_AUDIO := false
+TARGET_USES_QCOM_BSP := false
+
+TARGET_USES_NQ_NFC := true
+
+
+# default is nosdcard, S/W button enabled in resource
+PRODUCT_CHARACTERISTICS := nosdcard
+BOARD_FRP_PARTITION_NAME := frp
+
+#Android EGL implementation
+PRODUCT_PACKAGES += libGLES_android
+
+PRODUCT_BOOT_JARS += tcmiface
+PRODUCT_BOOT_JARS += telephony-ext
+PRODUCT_PACKAGES += telephony-ext
+
+TARGET_ENABLE_QC_AV_ENHANCEMENTS := false
+
+TARGET_SYSTEM_PROP += device/qcom/qssi_32go/system.prop
+
+TARGET_DISABLE_DASH := true
+TARGET_DISABLE_QTI_VPP := true
+
+ifneq ($(TARGET_DISABLE_DASH), true)
+    PRODUCT_BOOT_JARS += qcmediaplayer
+endif
+
+#Project is missing on sdm845, comment it for now
+#ifneq ($(strip $(QCPATH)),)
+#    PRODUCT_BOOT_JARS += libprotobuf-java_mls
+#endif
+
+PRODUCT_PACKAGES += android.hardware.media.omx@1.0-impl
+
+# Audio configuration file
+-include $(TOPDIR)vendor/qcom/opensource/audio-hal/primary-hal/configs/qssi/qssi.mk
+-include $(TOPDIR)vendor/qcom/opensource/commonsys/audio/configs/qssi/qssi.mk
+AUDIO_FEATURE_ENABLED_SVA_MULTI_STAGE := true
+USE_LIB_PROCESS_GROUP := true
+
+PRODUCT_PACKAGES += fs_config_files
+
+ifeq ($(ENABLE_AB), true)
+#A/B related packages
+PRODUCT_PACKAGES += update_engine \
+    update_engine_client \
+    update_verifier \
+    bootctrl.msmnile \
+    android.hardware.boot@1.0-impl \
+    android.hardware.boot@1.0-service
+
+PRODUCT_HOST_PACKAGES += \
+    brillo_update_payload
+
+#Boot control HAL test app
+PRODUCT_PACKAGES_DEBUG += bootctl
+endif
+
+#Healthd packages
+PRODUCT_PACKAGES += \
+    android.hardware.health@1.0-impl \
+    android.hardware.health@1.0-convert \
+    android.hardware.health@1.0-service \
+    libhealthd.msm
+
+DEVICE_FRAMEWORK_MANIFEST_FILE := device/qcom/qssi_32go/framework_manifest.xml
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := vendor/qcom/opensource/core-utils/vendor_framework_compatibility_matrix.xml
+
+#audio related module
+PRODUCT_PACKAGES += libvolumelistener
+
+# Display/Graphics
+PRODUCT_PACKAGES += \
+    android.hardware.broadcastradio@1.0-impl
+
+# Camera configuration file. Shared by passthrough/binderized camera HAL
+PRODUCT_PACKAGES += camera.device@3.2-impl
+PRODUCT_PACKAGES += camera.device@1.0-impl
+PRODUCT_PACKAGES += android.hardware.camera.provider@2.4-impl
+# Enable binderized camera HAL
+PRODUCT_PACKAGES += android.hardware.camera.provider@2.4-service_64
+
+
+# Context hub HAL
+PRODUCT_PACKAGES += \
+    android.hardware.contexthub@1.0-impl.generic \
+    android.hardware.contexthub@1.0-service
+
+# system prop for enabling QFS (QTI Fingerprint Solution)
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.qfp=true
+
+
+# USB default HAL
+PRODUCT_PACKAGES += \
+    android.hardware.usb@1.0-service
+
+#PASR HAL and APP
+PRODUCT_PACKAGES += \
+    vendor.qti.power.pasrmanager@1.0-service \
+    vendor.qti.power.pasrmanager@1.0-impl \
+    pasrservice
+
+# Kernel modules install path
+KERNEL_MODULES_INSTALL := dlkm
+KERNEL_MODULES_OUT := out/target/product/$(PRODUCT_NAME)/$(KERNEL_MODULES_INSTALL)/lib/modules
+
+ifneq ($(strip $(TARGET_BUILD_VARIANT)),user)
+PRODUCT_COPY_FILES += \
+    device/qcom/qssi_32go/init.qcom.testscripts.sh:$(TARGET_COPY_OUT_PRODUCT)/etc/init.qcom.testscripts.sh
+endif
+
+#Enable full treble flag
+PRODUCT_FULL_TREBLE_OVERRIDE := true
+PRODUCT_VENDOR_MOVE_ENABLED := true
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
+#Enable vndk-sp Libraries
+PRODUCT_PACKAGES += vndk_package
+
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE:=true
+
+# Add lwm2m for SC200ENATA
+PRODUCT_PACKAGES += \
+    libquecteltel \
+    mango-lwm2m \
+    MangoLwm2mApp \
+    libqmiservices_ext \
+    libqlmodem \
+    FotaUpdater
+
+PRODUCT_PACKAGES += android.hardware.quectelat@1.0
+
+TARGET_MOUNT_POINTS_SYMLINKS := false
+
+TARGET_USES_MKE2FS := true
+
+PRODUCT_PROPERTY_OVERRIDES += \
+ro.crypto.volume.filenames_mode = "aes-256-cts" \
+ro.crypto.allow_encrypt_override = true
+
+TARGET_USES_QCOM_DISPLAY_BSP := true
+
+ifeq ($(TARGET_USES_NEW_ION),true)
+AUDIO_FEATURE_ENABLED_DLKM := true
+else
+AUDIO_FEATURE_ENABLED_DLKM := false
+endif
+
+ifeq ($(ENABLE_VIRTUAL_AB), true)
+    $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
+endif
+
+ifeq ($(SYSTEMEXT_SEPARATE_PARTITION_ENABLE), false)
+PRODUCT_PACKAGES += \
+    qti_skip_mount.cfg
+endif
+
+# Include mainline components and QSSI whitelist
+ifeq (true,$(call math_gt_or_eq,$(SHIPPING_API_LEVEL),29))
+  PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
+endif
+
+###################################################################################
+# This is the End of target.mk file.
+# Now, Pickup other split product.mk files:
+###################################################################################
+$(call inherit-product-if-exists, vendor/qcom/defs/product-defs/system/*.mk)
+###################################################################################
+
