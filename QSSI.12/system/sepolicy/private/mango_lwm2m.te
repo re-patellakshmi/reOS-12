@@ -1,0 +1,185 @@
+type mango_lwm2m, domain;
+type mango_lwm2m_exec, exec_type, system_file_type, file_type;
+
+type vendor_hal_quectelat_default, domain;
+type bt_firmware_file, file_type;
+
+typeattribute mango_lwm2m mango_lwm2m_violators;
+typeattribute mango_lwm2m coredomain;
+init_daemon_domain(mango_lwm2m)
+net_domain(mango_lwm2m)
+
+#============= vendor_init ==============
+allow vendor_init block_device:lnk_file setattr;
+allow vendor_init persist_debug_prop:file read;
+allow vendor_init system_data_file:dir { ioctl open read create };
+allow vendor_init ota_package_file:dir search;
+allow vendor_init ota_package_file:file setattr;
+
+#============= mango_lwm2m ==============
+allow mango_lwm2m default_android_service:service_manager find;
+allow mango_lwm2m hwservicemanager:binder { call transfer };
+allow mango_lwm2m hwservicemanager_prop:file { getattr map open read };
+allow mango_lwm2m self:capability net_raw;
+allow mango_lwm2m servicemanager:service_manager list;
+allow mango_lwm2m vendor_hal_quectelat_hwservice:hwservice_manager find;
+allow mango_lwm2m vendor_hal_quectelat_default:binder call;
+allow mango_lwm2m system_data_root_file:dir { write add_name remove_name };
+allow mango_lwm2m system_data_root_file:file { create read write open setattr getattr unlink };
+
+#============= hwservicemanager ==============
+allow hwservicemanager mango_lwm2m:binder transfer;
+
+#============= radio ==============
+allow radio default_prop:property_service set;
+allow radio vendor_default_prop:property_service set;
+
+#allow qti_init_shell ctl_default_prop:property_service  { set };
+
+allow mango_lwm2m rootfs:lnk_file { getattr };
+allow mango_lwm2m storage_file:dir { search };
+allow mango_lwm2m storage_file:lnk_file { read };
+
+allow mango_lwm2m mango_lwm2m:udp_socket { create write read connect bind getopt};
+allow mango_lwm2m mango_lwm2m:capability { net_raw };
+
+allow mango_lwm2m dnsproxyd_socket:sock_file { write };
+#E allow mango_lwm2m object_r:udp_socket { name_bind node_bind };
+#E allow mango_lwm2m object_r:dir { search };
+#E allow mango_lwm2m mnt_user_file:lnk_file { read search };
+allow mango_lwm2m mnt_user_file:dir { read search };
+allow mango_lwm2m port:udp_socket { name_bind };
+
+allow mango_lwm2m tmpfs:dir { search };
+allow mango_lwm2m fwmarkd_socket:sock_file { write };
+allow mango_lwm2m netd:unix_stream_socket { connectto };
+allow mango_lwm2m node:udp_socket { node_bind name_bind };
+allow mango_lwm2m fuse:dir { search write add_name remove_name};
+allow mango_lwm2m fuse:file { create open write read getattr unlink };
+allow mango_lwm2m mnt_user_file:lnk_file { read };
+allow mango_lwm2m mnt_user_file:dir { search };
+
+allow netd mango_lwm2m:udp_socket { getopt setopt };
+allow netd mango_lwm2m:udp_socket { read write };
+allow netd mango_lwm2m:unix_stream_socket { connectto };
+allow netd mango_lwm2m:fd { use };
+
+
+allow init socket_device:sock_file { setattr create unlink };
+#allow atfwd_quec socket_device:sock_file { write };
+#allow atfwd_quec mango_lwm2m:unix_stream_socket { connectto };
+
+#allow atfwd_quec mango_lwm2m:unix_stream_socket { connectto };
+allow mango_lwm2m mango_lwm2m:capability { dac_override };
+allow mango_lwm2m system_data_file:dir { add_name create };
+allow mango_lwm2m system_data_file:file { create read write open };
+
+#libsepol.report_failure: neverallow on line 343 of system/sepolicy/domain.te (or line 9215 of policy.conf)
+#violated by allow radio default_prop:property_service { set };
+#modify never allow rules in /sepolicy/domain.te
+allow radio default_prop:property_service { set };
+#allow qti_init_shell default_prop:property_service { set };
+
+#libsepol.report_failure: neverallow on line 343 of system/sepolicy/domain.te (or line 9215 of policy.conf)
+#violated by allow system_app default_prop:property_service { set };
+#allow system_app default_prop:property_service { set };
+
+allow mango_lwm2m servicemanager:binder { call };
+allow servicemanager mango_lwm2m:dir { search };
+allow servicemanager mango_lwm2m:file { read open };
+allow servicemanager mango_lwm2m:process { getattr };
+allow mango_lwm2m radio:binder { call };
+allow mango_lwm2m radio:binder { transfer };
+allow radio mango_lwm2m:binder { call };
+
+allow mango_lwm2m sysfs:file { read };
+allow mango_lwm2m system_data_file:dir { write };
+allow mango_lwm2m mango_lwm2m:socket { create };
+allow mango_lwm2m mango_lwm2m:socket { create write read };
+
+#allow mango_lwm2m radio_service:service_manager { find };
+
+allow mango_lwm2m property_socket:sock_file { write };
+allow mango_lwm2m default_prop:property_service { set };
+allow mango_lwm2m init:unix_stream_socket { connectto };
+
+allow mango_lwm2m sysfs:file { open };
+#allow mango_lwm2m smd_device:chr_file { open read write };
+
+#allow system_app default_prop:property_service { set };
+#allow system_app dalvikcache_data_file:file { write setattr};
+
+
+allow radio system_app_data_file:dir { getattr };
+allow mango_lwm2m binder_device:chr_file { read write open ioctl };
+
+allow radio default_prop:property_service { set };
+
+allow mango_lwm2m media_rw_data_file:dir { add_name remove_name  write search read open };
+allow mango_lwm2m media_rw_data_file:file { create write open unlink getattr read };
+allow mango_lwm2m sdcardfs:dir { write add_name remove_name search };
+allow mango_lwm2m sdcardfs:file { getattr create unlink write open read };
+allow mango_lwm2m default_prop:file { read getattr open };
+#allow mango_lwm2m vendor_default_prop:file { getattr open };
+allow mango_lwm2m exported3_system_prop:file { read open getattr };
+allow vendor_init default_prop:property_service { set };
+allow radio default_android_service:service_manager { add };
+
+
+allow mango_lwm2m system_data_file:dir { add_name getattr remove_name read open};
+allow mango_lwm2m system_data_file:file { create read write open getattr setattr append unlink rename };
+allow mango_lwm2m mango_lwm2m:capability { sys_boot net_admin };
+allow vendor_init system_data_file:dir { setattr};
+
+#for ota update
+allow system_app apk_data_file:dir { write remove_name add_name };
+allow system_app apk_data_file:file { unlink write create  };
+allow update_engine storage_file:lnk_file { read };
+allow update_engine mnt_user_file:lnk_file { read };
+allow update_engine mnt_user_file:dir { search };
+allow update_engine media_rw_data_file:file { read open getattr };
+allow system_app cache_file:lnk_file { read };
+allow system_app cache_file:dir { search };
+allow system_app cache_recovery_file:dir { search write remove_name add_name };
+allow system_app cache_recovery_file:file { unlink create write open getattr setattr };
+allow update_engine system_data_file:dir { search };
+allow update_engine system_data_file:file { read open getattr };
+allow update_engine bt_firmware_file:dir { search };
+allow mango_lwm2m shell_exec:file { execute read open execute_no_trans map getattr };
+allow mango_lwm2m toolbox_exec:file { execute read open execute_no_trans getattr };
+allow mango_lwm2m vendor_toolbox_exec:file { getattr };
+allow uncrypt cache_file:lnk_file { read };
+allow uncrypt system_data_file:file { ioctl };
+
+#temp
+allow system_app ota_package_file:file r_file_perms;
+allow system_app ota_package_file:dir r_dir_perms;
+allow system_app ota_package_file:dir { search write add_name remove_name };
+allow system_app ota_package_file:file { create write open getattr read unlink map };
+
+allow mango_lwm2m default_android_service:service_manager { find };
+allow system_app system_data_file:dir { write add_name remove_name};
+allow system_app system_data_file:file { create write open getattr read unlink };
+allow uncrypt system_data_file:file { getattr read write open };
+allow system_app default_prop:property_service { set };
+
+allow system_app system_data_file:dir { write add_name remove_name};
+allow system_app system_data_file:file { create write open getattr read unlink };
+
+allow uncrypt system_data_file:file { getattr read write open };
+allow system_app default_prop:property_service { set };
+
+
+allow mango_lwm2m vendor_toolbox_exec:file { execute_no_trans };
+allow mango_lwm2m system_file:file { execute_no_trans };
+allow mango_lwm2m mango_lwm2m:netlink_route_socket { nlmsg_write };
+allow mango_lwm2m net_data_file:file { open read getattr };
+allow mango_lwm2m net_data_file:dir { search };
+allow mango_lwm2m vendor_shell_exec:file { execute_no_trans };
+
+allow mango_lwm2m socket_device:sock_file { write };
+
+#============= system_server ==============
+#allow system_server vendor_default_prop:file { getattr map open read };
+
+
