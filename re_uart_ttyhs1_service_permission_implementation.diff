@@ -1,0 +1,69 @@
+diff --git a/QSSI.12/device/qcom/qssi/base.mk b/QSSI.12/device/qcom/qssi/base.mk
+index af4d90e..1622737 100755
+--- a/QSSI.12/device/qcom/qssi/base.mk
++++ b/QSSI.12/device/qcom/qssi/base.mk
+@@ -714,6 +714,8 @@ else
+     DELAUN := Launcher3
+ endif
+ 
++PRODUCT_PACKAGES += uartservice
++
+ PRODUCT_PACKAGES += $(ALSA_HARDWARE)
+ PRODUCT_PACKAGES += $(ALSA_UCM)
+ PRODUCT_PACKAGES += $(ANGLE)
+diff --git a/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/device.te b/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/device.te
+index e80846f..8b7fb58 100644
+--- a/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/device.te
++++ b/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/device.te
+@@ -67,3 +67,4 @@ type vendor_uefi_block_device, dev_type;
+ type vendor_qce_device, dev_type;
+ type vendor_npu_device, dev_type;
+ type vendor_qmcs_block_device, dev_type;
++type uart_device,dev_type,mlstrustedobject;
+diff --git a/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/file_contexts b/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/file_contexts
+index 3f3d4d2..072a642 100755
+--- a/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/file_contexts
++++ b/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/file_contexts
+@@ -34,6 +34,7 @@
+ /dev/msm_npu                                    u:object_r:vendor_npu_device:s0
+ # TODO: does ttyMSM0 need to be more specific
+ /dev/ttyMSM0                                    u:object_r:tty_device:s0
++/dev/ttyHS1                                     u:object_r:uart_device:s0
+ /dev/ipa                                        u:object_r:vendor_ipa_dev:s0
+ /dev/wwan_ioctl                                 u:object_r:vendor_ipa_dev:s0
+ /dev/ipaNatTable                                u:object_r:vendor_ipa_dev:s0
+diff --git a/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/system_app.te b/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/system_app.te
+index 19ffaf0..0aa31f1 100755
+--- a/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/system_app.te
++++ b/UM.9.15/device/qcom/sepolicy_vndr/generic/vendor/common/system_app.te
+@@ -27,7 +27,7 @@
+ # read regulatory info
+ allow system_app vendor_elabel_data_file:dir r_dir_perms;
+ allow system_app vendor_elabel_data_file:file r_file_perms;
+-
++allow system_app uart_device:chr_file rw_file_perms;
+ # Allow hbtp hal Service to be found
+ hal_client_domain(system_app, vendor_hal_hbtp)
+ 
+diff --git a/UM.9.15/kernel/msm-4.19/drivers/tty/serial/msm_geni_serial.c b/UM.9.15/kernel/msm-4.19/drivers/tty/serial/msm_geni_serial.c
+index d8bd1e5..bed4396 100644
+--- a/UM.9.15/kernel/msm-4.19/drivers/tty/serial/msm_geni_serial.c
++++ b/UM.9.15/kernel/msm-4.19/drivers/tty/serial/msm_geni_serial.c
+@@ -3533,7 +3533,7 @@ static int msm_geni_serial_probe(struct platform_device *pdev)
+ 								GFP_KERNEL);
+ 
+ 		pm_runtime_set_suspended(&pdev->dev);
+-		pm_runtime_set_autosuspend_delay(&pdev->dev, 150);
++		pm_runtime_set_autosuspend_delay(&pdev->dev, -1);
+ 		pm_runtime_use_autosuspend(&pdev->dev);
+ 		pm_runtime_enable(&pdev->dev);
+ 	}
+@@ -3752,7 +3752,7 @@ static int msm_geni_serial_sys_suspend_noirq(struct device *dev)
+ 				"%s:Active userspace vote; ioctl_cnt %d\n",
+ 					__func__, port->ioctl_count);
+ 			mutex_unlock(&tty_port->mutex);
+-			return -EBUSY;
++			//return -EBUSY;
+ 		}
+ 		IPC_LOG_MSG(port->ipc_log_pwr, "%s\n", __func__);
+ 		mutex_unlock(&tty_port->mutex);
