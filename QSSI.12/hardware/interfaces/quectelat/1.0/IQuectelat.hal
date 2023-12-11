@@ -1,0 +1,7 @@
+package android.hardware.quectelat@1.0;
+
+interface IQuectelat {
+  
+  sendAtCmd(string cmd) generates (string resp);
+};
+

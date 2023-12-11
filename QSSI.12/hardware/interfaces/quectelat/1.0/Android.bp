@@ -1,0 +1,11 @@
+hidl_interface {
+    name: "android.hardware.quectelat@1.0",
+    root: "android.hardware",
+    srcs: [
+        "IQuectelat.hal",
+    ],
+    interfaces: [
+        "android.hidl.base@1.0",
+    ],
+    gen_java: true,
+}
