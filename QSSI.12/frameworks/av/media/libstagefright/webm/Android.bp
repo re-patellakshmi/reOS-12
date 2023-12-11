@@ -1,0 +1,68 @@
+package {
+    // See: http://go/android-license-faq
+    // A large-scale-change added 'default_applicable_licenses' to import
+    // all of the 'license_kinds' from "frameworks_av_media_libstagefright_license"
+    // to get the below license kinds:
+    //   SPDX-license-identifier-Apache-2.0
+    default_applicable_licenses: ["frameworks_av_media_libstagefright_license"],
+}
+
+cc_library_static {
+    name: "libstagefright_webm",
+
+    cppflags: ["-D__STDINT_LIMITS"],
+
+    cflags: [
+        "-Werror",
+        "-Wall",
+    ],
+
+    sanitize: {
+        misc_undefined: [
+            "signed-integer-overflow",
+            "unsigned-integer-overflow",
+        ],
+        cfi: true,
+    },
+
+    srcs: [
+        "EbmlUtil.cpp",
+        "WebmElement.cpp",
+        "WebmFrame.cpp",
+        "WebmFrameThread.cpp",
+        "WebmWriter.cpp",
+    ],
+
+    include_dirs: [
+        "frameworks/av/include",
+        "frameworks/av/media/libmediaextractor",
+        "frameworks/av/media/libstagefright/mpeg2ts",
+        "frameworks/av/media/libavextensions",
+        "frameworks/native/include/media/hardware",
+        "frameworks/native/include/media/openmax",
+        "frameworks/av/media/libstagefright/include",
+    ],
+
+    shared_libs: [
+        "libdatasource",
+        "libstagefright_foundation",
+        "libutils",
+        "liblog",
+        "libhidlbase",
+        "liblog",
+        "libui",
+        "libgui",
+        "libmediadrm",
+        "libnativewindow",
+        "libcrypto",
+        "android.hardware.media.omx@1.0",
+        "libhidlmemory",
+        "libcamera_client",
+        "framework-permission-aidl-cpp",
+    ],
+
+    header_libs: [
+        "libmedia_headers",
+        "media_ndk_headers",
+    ],
+}

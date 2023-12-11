@@ -1,0 +1,96 @@
+
+package {
+    default_applicable_licenses: ["frameworks_av_media_mediaserver_license"],
+}
+
+// Added automatically by a large-scale-change
+// See: http://go/android-license-faq
+license {
+    name: "frameworks_av_media_mediaserver_license",
+    visibility: [":__subpackages__"],
+    license_kinds: [
+        "SPDX-license-identifier-Apache-2.0",
+    ],
+    license_text: [
+        "NOTICE",
+    ],
+}
+
+cc_library_static {
+    name: "libregistermsext",
+    srcs: ["register.cpp"],
+
+    cflags: [
+        "-Werror",
+        "-Wall",
+    ],
+}
+
+cc_defaults {
+    name: "mediaserver_defaults",
+    shared_libs: [
+        "android.hardware.media.omx@1.0",
+        "libandroidicu",
+        "libfmq",
+        "libbinder",
+        "libhidlbase",
+        "liblog",
+        "libmediaplayerservice",
+        "libresourcemanagerservice",
+        "libutils",
+        "libcutils",
+    ],
+
+    static_libs: [
+        "libregistermsext",
+    ],
+
+    include_dirs: [
+        "frameworks/av/media/libmediaplayerservice",
+        "frameworks/av/services/mediaresourcemanager",
+    ],
+
+    cflags: [
+        "-Werror",
+        "-Wall",
+    ],
+
+    vintf_fragments: ["manifest_media_c2_software.xml"],
+}
+
+cc_binary {
+    name: "mediaserver",
+    defaults: [
+                "mediaserver_defaults",
+              ],
+    srcs: ["main_mediaserver.cpp"],
+    init_rc: ["mediaserver.rc"],
+    // mediaserver has only been verified on 32-bit, see b/126502613
+    // By default mediaserver runs in 32-bit to save memory, except
+    // on 64-bit-only lunch targets.
+    // Mediaserver has only been verified on 32-bit, see b/126502613
+    // use "prefer32" to *only* enable 64-bit builds on 64-bit-only lunch
+    // targets, which allows them to reach 'boot_complete'.
+    // ****************************************************************
+    // TO ENABLE 64-BIT MEDIASERVER ON MIXED 32/64-BIT DEVICES, COMMENT
+    // OUT THE FOLLOWING LINE:
+    // ****************************************************************
+    compile_multilib: "32",
+}
+cc_binary {
+    name: "mediaserver64",
+    defaults: [
+                "mediaserver_defaults",
+              ],
+    srcs: ["main_mediaserver.cpp"],
+    init_rc: ["mediaserver.rc"],
+    compile_multilib: "64",
+}
+cc_binary {
+    name: "mediaserverwrapper",
+    defaults: [
+                "mediaserver_defaults",
+              ],
+    srcs: ["mediaserverwrapper.cpp"],
+    init_rc: ["mediaserverwrapper.rc"],
+}
