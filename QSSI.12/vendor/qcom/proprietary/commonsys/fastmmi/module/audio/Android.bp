@@ -1,0 +1,81 @@
+cc_library_shared {
+    name: "mmi_audio",
+
+    srcs: [
+        "audio.cpp",
+    ],
+
+    include_dirs: [
+        "external/libcxx/include",
+    ],
+
+	cflags: ["-Wall"] + ["-DANDROID"],
+	
+    shared_libs: [
+        "libc",
+        "libcutils",
+        "libutils",
+        "liblog",
+        "libmmi",
+        "libxml2",
+        "libft2",
+        "libui",
+        "libbinder",
+        "libgui",
+        "libhwui",
+        "libc++",
+        "libbase",
+        "libutils",
+        "libhidlbase",
+		"libhidltransport",
+		"libhwbinder",
+        "libdiag_system",
+        "vendor.qti.hardware.factory@1.0",
+        "vendor.qti.hardware.factory@1.1",
+    ],
+	header_libs: [
+        "libmmi_headers",
+        "vendor_common_inc",
+    ],
+	
+    clang: true,
+    system_ext_specific: true,
+}
+
+cc_binary {
+
+    name: "audio_test",
+    srcs: [
+        "audio_test.cpp",
+    ],
+
+    include_dirs: [
+                "external/tinyalsa/include",
+    ],
+
+    cflags: [
+        "-Wall",
+    ],
+
+    shared_libs: [
+        "libc",
+        "libcutils",
+        "libutils",
+        "liblog",
+        "libui",
+        "libbinder",
+        "libgui",
+        "libhwui",
+        "libc++",
+        "libbase",
+        "libutils",
+        "libtinyalsa",
+    ],
+}
+
+
+
+
+
+
+

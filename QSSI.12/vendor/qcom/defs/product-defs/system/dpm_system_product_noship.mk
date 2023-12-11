@@ -1,0 +1,1 @@
+../../../proprietary/commonsys-intf/data/dpm_system_product_noship.mk

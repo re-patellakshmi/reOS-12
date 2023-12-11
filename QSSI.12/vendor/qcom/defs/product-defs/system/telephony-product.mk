@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/telephony-build/build/telephony_system_product.mk

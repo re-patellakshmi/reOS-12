@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/cv-sys-cfg/cv_system_product.mk

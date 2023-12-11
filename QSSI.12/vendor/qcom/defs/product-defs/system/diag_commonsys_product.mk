@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/coretech-config-commonsys/diag/diag_commonsys_product.mk

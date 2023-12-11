@@ -1,0 +1,39 @@
+android_app {
+    name: "SnapdragonMusic",
+
+    sdk_version: "system_current",
+
+    srcs: [
+        "src/**/*.java",
+        "src/com/android/music/IMediaPlaybackService.aidl",
+    ],
+
+    static_libs: [
+        "androidx-constraintlayout_constraintlayout",
+        "com.google.android.material_material",
+        "androidx.core_core",
+        "androidx.media_media",
+        "androidx.appcompat_appcompat",
+    ],
+
+    resource_dirs: ["res"],
+
+    overrides: ["Music"],
+    certificate: "platform",
+    product_specific: true,
+
+    optimize: {
+        proguard_flags_files: ["proguard.flags"],
+    },
+
+    aaptflags: [
+        "--auto-add-overlay",
+        "--extra-packages",
+        "androidx.appcompat_appcompat",
+    ],
+
+}
+
+// Use the folloing include to make our test apk.
+//include $(call all-makefiles-under,$(LOCAL_PATH))
+

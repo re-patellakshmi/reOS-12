@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/fastmmi/mmi_system.mk

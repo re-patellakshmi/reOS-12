@@ -1,0 +1,1 @@
+../../../proprietary/aptxui/aptxui_system_product.mk

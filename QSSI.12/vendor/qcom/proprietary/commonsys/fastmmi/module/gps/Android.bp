@@ -1,0 +1,61 @@
+cc_library_shared {
+    name: "mmi_gps",
+
+    srcs: [
+        "gps.cpp",
+    ],
+
+    include_dirs: [
+        "external/libcxx/include",
+    ],
+
+	cflags: ["-Wall"] + ["-DANDROID"],
+	
+    shared_libs: [
+        "libc",
+        "libcutils",
+        "libutils",
+        "liblog",
+        "libmmi",
+        "libxml2",
+        "libft2",
+        "libui",
+        "libbinder",
+        "libgui",
+        "libdng_sdk",
+        "libexpat",
+        "libjpeg",
+        "libpiex",
+        "libpng",
+        "libz",
+        "libheif",
+        "libvulkan",
+        "libnativewindow",
+        "libEGL",
+        "libGLESv2",
+        "libc++",
+        "libbase",
+        "libutils",
+        "libhidlbase",
+
+        "libdiag_system",
+        "vendor.qti.hardware.factory@1.0",
+        "vendor.qti.hardware.factory@1.1",
+    ],
+	header_libs: [
+        "libmmi_headers",
+        "vendor_common_inc",
+    ],
+	
+    clang: true,
+    system_ext_specific: true,
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/mm-parser/product.mk

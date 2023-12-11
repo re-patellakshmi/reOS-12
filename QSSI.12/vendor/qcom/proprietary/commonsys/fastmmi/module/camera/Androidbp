@@ -1,0 +1,65 @@
+cc_library_shared {
+    name: "mmi_camera",
+
+    owner: "qti",
+
+    srcs: [
+        "camera.cpp",
+    ],
+
+    include_dirs: [
+        "external/libcxx/include",
+        "external/libxml2/include",
+		"external/freetype/include",
+        "frameworks/base/libs/androidfw/include",
+        "frameworks/native/libs/nativewindow/include",
+		"system/media/camera/include",
+		"frameworks/native/include",
+		"frameworks/base/libs/androidfw/include",
+		"frameworks/native/libs/arect/include",
+		"frameworks/native/libs/nativebase/include",
+    ],
+	
+	cflags: ["-Wall"] + ["-DANDROID"] + ["-Wno-unused-parameter"],
+    shared_libs: [
+        "libc",
+        "libcutils",
+        "libutils",
+        "liblog",
+        "libmmi",
+        "libxml2",
+        "libft2",
+        "libui",
+        "libbinder",
+        "libgui",
+        "libdng_sdk",
+        "libexpat",
+        "libjpeg",
+        "libpiex",
+        "libpng",
+        "libz",
+        "libheif",
+        "libvulkan",
+        "libnativewindow",
+        "libEGL",
+        "libGLESv2",
+        "libc++",
+        "libbase",
+        "libutils",
+        "libhidlbase",
+
+		"libhidltransport",
+		"libhwbinder",
+		"vendor.qti.hardware.factory@1.0",
+		"libnativewindow"
+    ],
+	
+    header_libs: [
+        "libmmi_headers",
+        "vendor_common_inc",
+    ],
+
+    clang: true,
+    system_ext_specific: true,
+}
+

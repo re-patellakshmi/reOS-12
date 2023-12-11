@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/******************************************************************************
+ *
+ *  Copyright (c) 2020 - 2021 Qualcomm Technologies, Inc. and/or its subsidiaries.
+ *  All Rights Reserved.
+ *  Qualcomm Technologies, Inc. and/or its subsidiaries. Confidential and Proprietary.
+ *
+ ******************************************************************************/
+-->
+<resources>
+    <string name="app_name">als</string>
+    <string name="notification_qss_name">Status</string>
+
+    <string name="copyright_string">&#xae;</string>
+    <string name="trademark_string">&#x2122;</string>
+    <string name="qti_string">Qualcomm</string>
+    <string name="aptx_string">aptX</string>
+    <string name="hd_string">HD</string>
+    <string name="adaptive_string">Adaptive</string>
+    <string name="gaming_mode_string">Gaming Mode</string>
+    <string name="qss_enabled">false</string>
+</resources>

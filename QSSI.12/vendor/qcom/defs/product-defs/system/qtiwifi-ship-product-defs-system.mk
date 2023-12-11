@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/wifi/configs/qtiwifi-ship-product-defs-system.mk

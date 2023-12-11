@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/******************************************************************************
+ *
+ *  Copyright (c) 2020 - 2021 Qualcomm Technologies, Inc. and/or its subsidiaries.
+ *  All Rights Reserved.
+ *  Qualcomm Technologies, Inc. and/or its subsidiaries. Confidential and Proprietary.
+ *
+ ******************************************************************************/
+-->
+<resources>
+    <style name="AppTheme"
+        parent="Theme.AppCompat.DayNight">
+    </style>
+
+    <style name="PromptStyle">
+        <item name="fontFamily">sans-serif-bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>

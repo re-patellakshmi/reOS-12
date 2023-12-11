@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/******************************************************************************
+ *
+ *  Copyright (c) 2020 - 2021 Qualcomm Technologies, Inc. and/or its subsidiaries.
+ *  All Rights Reserved.
+ *  Qualcomm Technologies, Inc. and/or its subsidiaries. Confidential and Proprietary.
+ *
+ ******************************************************************************/
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.qualcomm.qtil.aptxacu"
+    android:versionCode="1"
+    android:versionName="4.0.5">
+
+    <uses-sdk android:minSdkVersion="31"
+            android:targetSdkVersion="31"
+            android:maxSdkVersion="31" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+    <uses-permission android:name="com.qualcomm.qtil.aptxals.PERMISSION"/>
+
+    <permission
+        android:name="com.qualcomm.qtil.aptxacu.PERMISSION"
+        android:label="aptxacu_permission"
+        android:protectionLevel="signature">
+    </permission>
+
+    <application
+        android:name=".aptxacuApplication"
+        android:theme="@style/Theme.AppCompat.DayNight"
+        android:label="@string/app_name"
+        android:persistent="true"
+        android:directBootAware="true">
+        <receiver
+            android:name=".aptxacuBootReceiver"
+            android:label="aptxacuBootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".aptxacuService"
+            android:permission="com.qualcomm.qtil.aptxacu.PERMISSION"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter >
+                <action android:name="com.qualcomm.qtil.aptxals.aptxacuService"/>
+            </intent-filter>
+        </service>
+        <activity
+            android:name=".aptxacuSettingsActivity"
+            android:label="@string/acu_label"
+            android:excludeFromRecents="false"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".aptxacuProfilePreferenceListActivity"
+            android:label="@string/ppl_label"
+            android:excludeFromRecents="false"
+            android:enabled="true"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".aptxacuTestActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:enabled="true"
+            android:exported="false">
+        </activity>
+    </application>
+</manifest>

@@ -1,0 +1,22 @@
+// Temporarily disable Wigig Manager as part of disabling WIGIG services
+/*
+//=============================================
+//  Wigig Manager
+//=============================================
+java_library {
+    name: "wigig_manager",
+    srcs: [
+*/
+//        "java/**/*.java",
+//        "java/**/*.aidl",
+/*
+    ],
+    aidl: {
+        local_include_dirs: ["java"],
+    },
+    optimize: {
+        enabled: false,
+    },
+    platform_apis: true,
+}
+*/

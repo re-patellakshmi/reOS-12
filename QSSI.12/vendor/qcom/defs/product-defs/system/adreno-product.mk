@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/adreno_buildcfg/adreno-product.mk

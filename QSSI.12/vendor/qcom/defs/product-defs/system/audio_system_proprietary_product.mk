@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/mm-audio/configs/qssi/audio_system_proprietary_product.mk

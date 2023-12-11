@@ -1,0 +1,1 @@
+../../../proprietary/aptxacu/aptxacu_system_product.mk

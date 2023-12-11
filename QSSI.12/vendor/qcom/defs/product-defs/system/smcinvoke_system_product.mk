@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/securemsm/config/smcinvoke_system_product.mk

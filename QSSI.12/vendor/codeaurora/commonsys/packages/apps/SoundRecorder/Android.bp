@@ -1,0 +1,48 @@
+// make wrapper static lib
+java_library {
+    name: "qti_soundrecorder_wrapper",
+    srcs: ["src-Wrapper/**/*.java"],
+
+    sdk_version: "current",
+
+}
+
+prebuilt_etc {
+    name: "privapp_whitelist_com.android.soundrecorder",
+
+    src: "privapp-permissions-soundrecorder.xml",
+    sub_dir: "permissions",
+    product_specific: true,
+    filename_from_src: true,
+}
+
+android_app {
+    name: "QtiSoundRecorder",
+
+    srcs: ["**/*.java"],
+
+    resource_dirs: ["res"],
+
+    aaptflags: ["--auto-add-overlay"] + ["--extra-packages"] + ["androidx.recyclerview_recyclerview"],
+
+
+    static_libs: [
+        "androidx.recyclerview_recyclerview",
+        "androidx.core_core",
+        "qti_soundrecorder_wrapper",
+    ],
+    required: ["privapp_whitelist_com.android.soundrecorder"],
+
+    overrides: ["SoundRecorder"],
+
+    product_specific: true,
+    sdk_version: "current",
+
+    optimize: {
+        proguard_flags_files: ["proguard.flags"],
+    },
+
+    privileged: true,
+
+}
+

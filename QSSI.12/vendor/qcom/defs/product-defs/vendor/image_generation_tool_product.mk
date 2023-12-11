@@ -1,0 +1,1 @@
+../../../opensource/core-utils/image_generation_tool/config/image_generation_tool_product.mk

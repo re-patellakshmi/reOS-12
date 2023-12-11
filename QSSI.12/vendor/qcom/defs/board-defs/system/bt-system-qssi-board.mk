@@ -1,0 +1,1 @@
+../../../opensource/commonsys-intf/bluetooth/bt-system-qssi-board.mk

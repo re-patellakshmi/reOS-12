@@ -1,0 +1,33 @@
+
+android_app {
+    name: "datastatusnotification",
+
+    optimize: {
+        enabled: false,
+    },
+
+    srcs: ["**/*.java"],
+
+    certificate: "platform",
+    libs: [
+        "services.core",
+        "qcrilhook",
+        "telephony-common",
+        "qti-telephony-utils",
+    ],
+
+    // TODO: use a proper runtime library instead of "services.core"
+    // and re-enable dexpreopt and <uses-library> checks.
+    // google bug id: 181586226
+
+    enforce_uses_libs: false,
+
+    dex_preopt: {
+        enabled: false,
+    },
+
+    platform_apis: true,
+
+    system_ext_specific: true,
+
+}

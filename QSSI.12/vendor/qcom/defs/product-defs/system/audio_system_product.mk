@@ -1,0 +1,1 @@
+../../../opensource/commonsys/audio/configs/qssi/audio_system_product.mk

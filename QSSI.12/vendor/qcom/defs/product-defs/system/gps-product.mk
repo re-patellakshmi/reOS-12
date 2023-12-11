@@ -1,0 +1,1 @@
+../../../proprietary/commonsys/gps-release/gps_system_product.mk

@@ -1,0 +1,23 @@
+prebuilt_etc {
+    name: "mmi.xml",
+
+    src: "mmi.xml",
+    sub_dir: "mmi",
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "ftm_test",
+
+    src: "ftm_test",
+    sub_dir: "mmi",
+    system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "wpa_supplicant_test.conf",
+
+    src: "wpa_supplicant_test.conf",
+    sub_dir: "mmi",
+    system_ext_specific: true,
+}

@@ -1,0 +1,1 @@
+../../opensource/core-utils/build/vendor_prop_context_restriction.mk
